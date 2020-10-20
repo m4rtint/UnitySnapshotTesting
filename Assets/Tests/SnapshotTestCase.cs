@@ -31,11 +31,11 @@ namespace Tests
             }
         }
         
-        protected void SnapshotVerifyView()
+        protected void SnapshotVerifyView(string identifier = null)
         {
             // MUST GET THE FILE PATH HERE, NAME OF METHOD DEPENDS ON REFLECTION/CALL STACK.
             // IF YOU CALL IT FROM ANYWHERE ELSE, THE METHOD NAME WILL BE INCONSISTENT
-            var filePath = GetFilePath();
+            var filePath = GetFilePath(identifier);
             var imageBytes = ScreenCaptureInBytes();
             var existingImageInBytes = GetFileIfExists(filePath);
 
@@ -92,9 +92,14 @@ namespace Tests
             return File.ReadAllBytes(path);
         }
 
-        private string GetFilePath()
+        private string GetFilePath(string suffix = null)
         {
-            return Path + _directoryName +"/"+ GetCurrentMethodName() + FileFormat;
+            var nameSuffix = "";
+            if (suffix != null)
+            {
+                nameSuffix = "_" + suffix;
+            }
+            return Path + _directoryName +"/"+ GetCurrentMethodName() + nameSuffix + FileFormat;
         }
 
         private string GetDirectoryPath()
