@@ -16,8 +16,8 @@ namespace Tests
         private const string FileFormat = ".png";
         
         protected bool RecordMode = false;
-        protected int Width = Screen.width;
-        protected int Height = Screen.height;
+        protected int Width = 1920;
+        protected int Height = 1080;
 
         private string _directoryName = "GenericTests";
         
@@ -45,11 +45,16 @@ namespace Tests
                 File.WriteAllBytes(filePath, imageBytes);
                 AssetDatabase.Refresh();
                 #endif
+                Assert.Fail("Recording Image");
             }
             
             if (existingImageInBytes == null)
             {
                 Assert.Fail("Image does not exist");
+            }
+            else if (existingImageInBytes.Length != imageBytes.Length)
+            {
+                Assert.Fail("Image resolution different");
             }
             else
             {
