@@ -87,11 +87,17 @@ namespace Tests
                 Directory.CreateDirectory(GetDirectoryPath());
             }
         }
+        
         private byte[] ScreenCaptureInBytes()
         {
             Texture2D screenImage = new Texture2D(Width, Height);
             //Get Image from screen
-            screenImage.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+            /*
+             * Issues - because different devices have different resolutions, you can't screenshot
+             * larger than the resolution than your device. and the bytes would be different
+             * Solve - How to take a screen shot on specific resolution.
+             */
+            screenImage.ReadPixels(new Rect(0, 0, Width, Height), 0, 0);
             screenImage.Apply();
             //Convert to png
             return screenImage.EncodeToPNG();
@@ -99,12 +105,7 @@ namespace Tests
 
         private byte[] GetFileIfExists(string path)
         {
-            if (!File.Exists(path))
-            {
-                return null;
-            }
-
-            return File.ReadAllBytes(path);
+            return File.Exists(path) ? File.ReadAllBytes(path) : null;
         }
 
         private string GetFilePath(string suffix = null)
