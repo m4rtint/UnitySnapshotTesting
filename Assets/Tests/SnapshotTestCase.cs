@@ -31,7 +31,7 @@ namespace Tests
             }
         }
         
-        protected void SnapshotVerifyView(string identifier = null)
+        protected void SnapshotVerifyView(string identifier = null, float errorTolerance = 0.1f)
         {
             // MUST GET THE FILE PATH HERE, NAME OF METHOD DEPENDS ON REFLECTION/CALL STACK.
             // IF YOU CALL IT FROM ANYWHERE ELSE, THE METHOD NAME WILL BE INCONSISTENT
@@ -42,7 +42,7 @@ namespace Tests
             if (RecordMode)
             {
                 #if UNITY_EDITOR
-                System.IO.File.WriteAllBytes(filePath, imageBytes);
+                File.WriteAllBytes(filePath, imageBytes);
                 AssetDatabase.Refresh();
                 #endif
             }
@@ -53,7 +53,17 @@ namespace Tests
             }
             else
             {
-                Assert.AreEqual(existingImageInBytes, imageBytes);
+                float amountOfBytesEqual = 0;
+                for (var i = 0; i < existingImageInBytes.Length; i++)
+                {
+                    if (existingImageInBytes[i] == imageBytes[i])
+                    {
+                        amountOfBytesEqual++;
+                    }
+                }
+
+                var percentageOfError = 1 - (amountOfBytesEqual / existingImageInBytes.Length);
+                Assert.LessOrEqual(percentageOfError, errorTolerance);
             }
             
             if (RecordMode)
@@ -67,9 +77,9 @@ namespace Tests
         private void SetupDirectoryIfNeeded()
         {
             
-            if (!System.IO.Directory.Exists(GetDirectoryPath()))
+            if (!Directory.Exists(GetDirectoryPath()))
             {
-                System.IO.Directory.CreateDirectory(GetDirectoryPath());
+                Directory.CreateDirectory(GetDirectoryPath());
             }
         }
         private byte[] ScreenCaptureInBytes()
